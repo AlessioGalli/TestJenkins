@@ -13,7 +13,7 @@ pipeline {
     stage('Update manifest version') {
       steps {
           powershell '''
-            $manifest = "01_VisualStudio\\WinForms.App\\WinForms.Packaging\\Package.appxmanifest"     
+            $manifest = "WinPackaging\\Package.appxmanifest"     
             [xml]$xmlDoc = Get-Content $manifest
             $version = $xmlDoc.Package.Identity.Version
             $trimmedVersion = $version -replace '.[0-9]+$', '.'
@@ -24,9 +24,9 @@ pipeline {
     }
     stage('Build') {
       steps {
-        bat "dotnet restore 01_VisualStudio\\WinForms.App\\WinForms.App\\WinForms.App.csproj"
+        bat "dotnet restore TestJenkins\\TestJenkins.csproj"
 
-        bat "\"${MSBUILD}\" 01_VisualStudio\\WinForms.App\\WinForms.app.sln /p:Configuration=${env.CONFIG} /p:AppxBundlePlatforms=${env.PLATFORM}  /p:AppxBundle=Never /p:UapAppxPackageBuildMode=Sideloading  /p:AppxPackageSigningEnabled=false"
+        bat "\"${MSBUILD}\" TestJenkins.sln /p:Configuration=${env.CONFIG} /p:AppxBundlePlatforms=${env.PLATFORM}  /p:AppxBundle=Never /p:UapAppxPackageBuildMode=Sideloading  /p:AppxPackageSigningEnabled=false"
         
       }
       post{
