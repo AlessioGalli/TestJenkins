@@ -25,7 +25,6 @@ stage ('Clean workspace') {
             $version = $xmlDoc.Package.Identity.Version
             $trimmedVersion = $version -replace '.[0-9]+$', '.'
             $xmlDoc.Package.Identity.Version = $trimmedVersion + ${env:BUILD_NUMBER}
-            echo 'New version:' $xmlDoc.Package.Identity.Version
             $xmlDoc.Save($manifest)
           '''
       }
@@ -34,7 +33,7 @@ stage ('Clean workspace') {
       steps {
         bat "dotnet restore TestJenkins\\TestJenkins.csproj"
 
-        bat "\"${MSBUILD}\" .\\TestJenkins.sln /p:Configuration=${env.CONFIG} /p:AppxBundlePlatforms=${env.PLATFORM}  /p:AppxBundle=Never /p:UapAppxPackageBuildMode=Sideloading  /p:AppxPackageSigningEnabled=false"
+        bat "\"${MSBUILD}\" TestJenkins.sln /p:Configuration=${env.CONFIG} /p:AppxBundlePlatforms=${env.PLATFORM}  /p:AppxBundle=Never /p:UapAppxPackageBuildMode=Sideloading  /p:AppxPackageSigningEnabled=false"
         
       }
       post {
