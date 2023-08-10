@@ -21,6 +21,7 @@ pipeline {
             $version = $xmlDoc.Package.Identity.Version
             $trimmedVersion = $version -replace '.[0-9]+$', '.'
             $xmlDoc.Package.Identity.Version = $trimmedVersion + ${env:BUILD_NUMBER}
+            echo 'New version:' $xmlDoc.Package.Identity.Version
             $xmlDoc.Save($manifest)
           '''
       }
