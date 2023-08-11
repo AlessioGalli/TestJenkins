@@ -11,25 +11,11 @@ pipeline {
   
   stages {
 
-      stage("Clone Git Repository") {
-          steps {
-            dir("repoClonato") {
-              git(
-                  url: "https://github.com/AlessioGalli/TestJenkins.git",
-                  branch: "master",
-                  changelog: true,
-                  poll: true
-              )
-            }
-          }
-      }
-
+      
 
     stage('Update manifest version') {
       steps {
-        dir("repoClonato") {
           powershell '''
-          dir
               # leggo la versione dal file
               $assemblyInfoPath=${env.WORKSPACE} + "TestJenkins\\Properties\\AssemblyInfo.cs"
               $contents = [System.IO.File]::ReadAllText($assemblyInfoPath)
@@ -56,7 +42,6 @@ pipeline {
               $path = $env.WORKSPACE + "version.txt"
               $BuildVersionNumber | out-file -encoding ASCII -filepath $path
           '''
-        }
       }
     }
     
@@ -73,14 +58,12 @@ pipeline {
 
       stage("Push to Git Repository") {
             steps {
-              dir("repoClonato") {
               sh "git add --all"
               sh "git commit -m 'initial commit'"
               sh "git push origin HEAD:master"
                 //withCredentials([gitUsernamePassword(credentialsId: 'GitHubToken', gitToolName: 'Default')]) {
                   //  sh "git push -u origin master"
                 //}
-            }
         }
       }
 
@@ -88,9 +71,7 @@ pipeline {
 
   post {
     always {
-      dir("repoClonato") {
         deleteDir()
-      }
     }
   }
 
