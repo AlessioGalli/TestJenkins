@@ -3,6 +3,7 @@ pipeline {
   agent any
 
   environment {
+    WORKSPACE = "C:\\Users\\u14856\\source\\repos\\TestJenkins"
     MSBUILD = "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Professional\\MSBuild\\15.0\\Bin\\MSBuild.exe"
     CONFIG = 'Release'
     PLATFORM = 'x86'
@@ -14,15 +15,32 @@ pipeline {
 
     stage('Update manifest version') {
       steps {
-          echo "${env.BUILD_NUMBER}"
           powershell '''
-            $manifest = "WinPackaging\\Package.appxmanifest"     
-            [xml]$xmlDoc = Get-Content $manifest
-            $version = $xmlDoc.Package.Identity.Version
-            $trimmedVersion = $version -replace '.[0-9]+$', '.'
-            $xmlDoc.Package.Identity.Version = $trimmedVersion + ${env:BUILD_NUMBER}
-            echo 'New version:' $xmlDoc.Package.Identity.Version
-            $xmlDoc.Save($manifest)
+              # leggo la versione dal file
+              $assemblyInfoPath=${env.WORKSPACE} + "\\TestJenkins\\Properties\\AssemblyInfo.cs"
+              $contents = [System.IO.File]::ReadAllText($assemblyInfoPath)
+              $versionString = [RegEx]::Match($contents,"(AssemblyFileVersion\("")(?:\d+\.\d+\.\d+\.\d+)(""\))")		# estraggo la versione assembly 
+              Write-Host ("AssemblyFileVersion: " +$versionString)													# e la stampo
+              
+              #estraggo il numero di build (l'ultimo della serie della versione)
+              $currentBuild = [RegEx]::Match($versionString,"(\.)(\d+)(""\))").Groups[2]
+              Write-Host ("Current Build: " + $currentBuild.Value)
+              
+              #incremento
+              $newBuild= [int]$currentBuild.Value +  1
+              Write-Host ("Nuova build: " + $newBuild)
+              
+              #faccio update del file e lo sovrascrivo
+              Write-Host ("Setting version in assembly info file ")
+              $contents = [RegEx]::Replace($contents, "(AssemblyVersion\(""\d+\.\d+\.\d+\.)(?:\d+)(""\))", ("`${1}" + $newBuild.ToString() + "`${2}"))
+              $contents = [RegEx]::Replace($contents, "(AssemblyFileVersion\(""\d+\.\d+\.\d+\.)(?:\d+)(""\))", ("`${1}" + $newBuild.ToString() + "`${2}"))
+              [System.IO.File]::WriteAllText($assemblyInfoPath, $contents)
+              
+              # ritiro fuori la versione e me la salvo in un file version.txt nella cartella principale del workspace
+              $version = gc $assemblyInfoPath | select-string -pattern "AssemblyVersion"
+              $BuildVersionNumber = $version -match '^\[assembly: AssemblyVersion\(\"(?<major>[0-9]+)\.(?<minor>[0-9]+)\.(?<revision>[0-9]+)\.(?<build>[0-9]+)\"\)\]'
+              $path = $env:WORKSPACE.ToString() + "\version.txt"
+              $BuildVersionNumber | out-file -encoding ASCII -filepath $path
           '''
       }
     }
