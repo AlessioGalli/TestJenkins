@@ -3,7 +3,7 @@ pipeline {
   agent any
 
   environment {
-    WORKSPACE = ""
+    //WORKSPACE = "C:\\Users\\u14856\\source\\repos\\TestJenkins\\"
     MSBUILD = "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Professional\\MSBuild\\15.0\\Bin\\MSBuild.exe"
     CONFIG = 'Release'
     PLATFORM = 'x86'
@@ -15,7 +15,7 @@ pipeline {
       steps {
           powershell '''
               # leggo la versione dal file
-              $assemblyInfoPath=${env.WORKSPACE} + "\\TestJenkins\\Properties\\AssemblyInfo.cs"
+              $assemblyInfoPath=${env.WORKSPACE} + "TestJenkins\\Properties\\AssemblyInfo.cs"
               $contents = [System.IO.File]::ReadAllText($assemblyInfoPath)
               $versionString = [RegEx]::Match($contents,"(AssemblyFileVersion\\("")(?:\\d+\\.\\d+\\.\\d+\\.\\d+)(""\\))")		# estraggo la versione assembly 
               Write-Host ("AssemblyFileVersion: " +$versionString)													# e la stampo
@@ -37,7 +37,7 @@ pipeline {
               # ritiro fuori la versione e me la salvo in un file version.txt nella cartella principale del workspace
               $version = gc $assemblyInfoPath | select-string -pattern "AssemblyVersion"
               $BuildVersionNumber = $version -match '^\\[assembly: AssemblyVersion\\(\\"(?<major>[0-9]+)\\.(?<minor>[0-9]+)\\.(?<revision>[0-9]+)\\.(?<build>[0-9]+)\\"\\)\\]'
-              $path = $env.WORKSPACE + "\\version.txt"
+              $path = $env.WORKSPACE + "version.txt"
               $BuildVersionNumber | out-file -encoding ASCII -filepath $path
           '''
       }
