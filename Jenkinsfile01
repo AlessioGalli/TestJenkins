@@ -73,6 +73,8 @@ pipeline {
       stage("Push to Git Repository") {
             steps {
               dir("repoClonato") {
+              sh "git add --all"
+              sh "git commit -m 'initial commit'"
               sh "git push origin HEAD:master"
                 //withCredentials([gitUsernamePassword(credentialsId: 'GitHubToken', gitToolName: 'Default')]) {
                   //  sh "git push -u origin master"
