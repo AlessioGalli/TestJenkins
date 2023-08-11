@@ -11,8 +11,6 @@ pipeline {
   
   stages {
 
-
-
     stage('Update manifest version') {
       steps {
           powershell '''
@@ -43,14 +41,12 @@ pipeline {
               $BuildVersionNumber | out-file -encoding ASCII -filepath $path
           '''
       }
-    }
-    stage('Build') {
-      steps {
-        bat "dotnet restore TestJenkins\\TestJenkins.csproj"
-        bat "\"${MSBUILD}\" TestJenkins\\TestJenkins.csproj /t:rebuild /clp:ShowCommandLine"
-        
-      }
-      
-    }
+    
+      stage('Build') {
+          steps {
+            bat "dotnet restore TestJenkins\\TestJenkins.csproj"
+            bat "\"${MSBUILD}\" TestJenkins\\TestJenkins.csproj /t:rebuild /clp:ShowCommandLine"
+          }
+      }  
   }
 }
