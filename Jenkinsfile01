@@ -27,6 +27,7 @@ pipeline {
 
     stage('Update manifest version') {
       steps {
+        dir("repoClonato") {
           powershell '''
               # leggo la versione dal file
               $assemblyInfoPath=${env.WORKSPACE} + "TestJenkins\\Properties\\AssemblyInfo.cs"
@@ -54,24 +55,29 @@ pipeline {
               $path = $env.WORKSPACE + "version.txt"
               $BuildVersionNumber | out-file -encoding ASCII -filepath $path
           '''
+        }
       }
     }
     
       stage('Build') {
+        dir("repoClonato") {
           steps {
            // bat "dotnet restore TestJenkins\\TestJenkins.csproj"
             bat "\"${MSBUILD}\" TestJenkins\\TestJenkins.csproj /t:rebuild /clp:ShowCommandLine"
           }
+        }
       }
 
 
       stage("Push to Git Repository") {
+        dir("repoClonato") {
             steps {
               sh "git push origin HEAD:master"
                 //withCredentials([gitUsernamePassword(credentialsId: 'GitHubToken', gitToolName: 'Default')]) {
                   //  sh "git push -u origin master"
                 //}
             }
+        }
       }
 
   }
