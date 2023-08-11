@@ -84,12 +84,14 @@ pipeline {
               $BUILD_VERSION = [RegEx]::Match($contents,"(?:\\d+\\.\\d+\\.\\d+\\.\\d+)").ToString()
               #---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-          dotnet test ${workspace}\\UnitTestProject1\\UnitTestProject1.csproj --logger \"junit;LogFilePath=\"${WORKSPACE}\"/TestResults/1.0.0.\"$BUILD_VERSION\"/results.xml\" --configuration release --collect \"Code coverage\"
+          dotnet test ${workspace}\\UnitTestProject1\\UnitTestProject1.csproj --logger \"junit;LogFilePath=\"${WORKSPACE}\"\\TestResults\\1.0.0.\"$BUILD_VERSION\"\\results.xml\" --configuration release --collect \"Code coverage\"
 
 
             $destinationFolder = ${env:BIN_FOLDER_DESTINATION} + "\\BUILD " + $BUILD_VERSION
+            Write-Host ("destinationFolder: " +$destinationFolder)							
+
             if (!(Test-Path -path "$destinationFolder")) {New-Item "$destinationFolder" -Type Directory}
-            $file = Get-ChildItem -Path \"$env:WORKSPACE\\TestResults/*/*.coverage\"
+            $file = Get-ChildItem -Path \"$env:WORKSPACE\\TestResults\\*\\*.coverage\"
             $file | Rename-Item -NewName testcoverage.coverage
             $renamedFile = Get-ChildItem -Path \"$env:WORKSPACE\\TestResults/*/*.coverage\"
             Copy-Item $renamedFile -Destination "$destinationFolder"
@@ -139,7 +141,7 @@ pipeline {
 
   post {
     always {
-        deleteDir()
+       // deleteDir()
     }
   }
 
