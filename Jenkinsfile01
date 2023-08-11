@@ -29,6 +29,7 @@ pipeline {
       steps {
         dir("repoClonato") {
           powershell '''
+          dir
               # leggo la versione dal file
               $assemblyInfoPath=${env.WORKSPACE} + "TestJenkins\\Properties\\AssemblyInfo.cs"
               $contents = [System.IO.File]::ReadAllText($assemblyInfoPath)
@@ -87,7 +88,9 @@ pipeline {
 
   post {
     always {
+      dir("repoClonato") {
         deleteDir()
+      }
     }
   }
 
