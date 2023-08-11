@@ -74,7 +74,7 @@ pipeline {
           steps {
             powershell '''
               # copio la cartella bin da un'altra parte
-              $destPath = $env.BIN_FOLDER_DESTINATION + "\\BUILD " + ${BUILD_VERSION}
+              $destPath = ${BIN_FOLDER_DESTINATION} + "\\BUILD " + ${BUILD_VERSION} # qui uso la BUILD_VERSION che ho salvato prima
               Copy-Item -Path "TestJenkins\\bin" -Destination "$destPath" -Recurse
           '''
           
