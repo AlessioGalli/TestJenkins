@@ -50,11 +50,7 @@ pipeline {
         bat "\"${MSBUILD}\" TestJenkins\\TestJenkins.csproj /t:rebuild /clp:ShowCommandLine"
         
       }
-      post {
-        always {
-          archiveArtifacts artifacts: '**/*.msix', followSymlinks: false
-        }
-      }
+      
     }
   }
 }
