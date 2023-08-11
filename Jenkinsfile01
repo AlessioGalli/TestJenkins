@@ -3,7 +3,7 @@ pipeline {
   agent any
 
   environment {
-    WORKSPACE = "C:\\Users\\u14856\\source\\repos\\TestJenkins"
+    WORKSPACE = ""
     MSBUILD = "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Professional\\MSBuild\\15.0\\Bin\\MSBuild.exe"
     CONFIG = 'Release'
     PLATFORM = 'x86'
