@@ -60,8 +60,9 @@ pipeline {
     }
     
       stage('Build') {
-        dir("repoClonato") {
+        
           steps {
+            dir("repoClonato") {
            // bat "dotnet restore TestJenkins\\TestJenkins.csproj"
             bat "\"${MSBUILD}\" TestJenkins\\TestJenkins.csproj /t:rebuild /clp:ShowCommandLine"
           }
@@ -70,8 +71,8 @@ pipeline {
 
 
       stage("Push to Git Repository") {
-        dir("repoClonato") {
             steps {
+              dir("repoClonato") {
               sh "git push origin HEAD:master"
                 //withCredentials([gitUsernamePassword(credentialsId: 'GitHubToken', gitToolName: 'Default')]) {
                   //  sh "git push -u origin master"
