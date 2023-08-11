@@ -11,6 +11,18 @@ pipeline {
   
   stages {
 
+      stage("Clone Git Repository") {
+          steps {
+            dir("repoClonato") {
+              git(
+                  url: "https://github.com/AlessioGalli/TestJenkins.git",
+                  branch: "main",
+                  changelog: true,
+                  poll: true
+              )
+            }
+          }
+      }
 
 
     stage('Update manifest version') {
@@ -61,6 +73,12 @@ pipeline {
             }
       }
 
-
   }
+
+  post {
+    always {
+        deleteDir()
+    }
+  }
+
 }
