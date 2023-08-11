@@ -11,6 +11,8 @@ pipeline {
   
   stages {
 
+
+
     stage('Update manifest version') {
       steps {
           powershell '''
@@ -48,6 +50,17 @@ pipeline {
            // bat "dotnet restore TestJenkins\\TestJenkins.csproj"
             bat "\"${MSBUILD}\" TestJenkins\\TestJenkins.csproj /t:rebuild /clp:ShowCommandLine"
           }
-      }  
+      }
+
+
+      stage("Push to Git Repository") {
+            steps {
+                withCredentials([gitUsernamePassword(credentialsId: 'GitHubToken', gitToolName: 'Default')]) {
+                    sh "git push -u origin main"
+                }
+            }
+      }
+
+
   }
 }
