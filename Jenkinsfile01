@@ -45,7 +45,7 @@ pipeline {
     
       stage('Build') {
           steps {
-            bat "dotnet restore TestJenkins\\TestJenkins.csproj"
+           // bat "dotnet restore TestJenkins\\TestJenkins.csproj"
             bat "\"${MSBUILD}\" TestJenkins\\TestJenkins.csproj /t:rebuild /clp:ShowCommandLine"
           }
       }  
