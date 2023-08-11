@@ -39,7 +39,7 @@ pipeline {
               # ritiro fuori la versione e me la salvo in un file version.txt nella cartella principale del workspace
               $version = gc $assemblyInfoPath | select-string -pattern "AssemblyVersion"
               $BuildVersionNumber = $version -match '^\[assembly: AssemblyVersion\(\"(?<major>[0-9]+)\.(?<minor>[0-9]+)\.(?<revision>[0-9]+)\.(?<build>[0-9]+)\"\)\]'
-              $path = $env:WORKSPACE.ToString() + "\version.txt"
+              $path = $env.WORKSPACE + "\version.txt"
               $BuildVersionNumber | out-file -encoding ASCII -filepath $path
           '''
       }
