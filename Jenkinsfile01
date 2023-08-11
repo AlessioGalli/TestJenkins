@@ -34,7 +34,7 @@ pipeline {
               Write-Host ("AssemblyFileVersion: " +$versionString)													# e la stampo
               
               #estraggo la versione e me la salvo nella variabile d'ambiene per lo step dopo
-              env.BUILD_VERSION = [RegEx]::Match($contents,"(?:\\d+\\.\\d+\\.\\d+\\.\\d+)").ToString()
+              ${BUILD_VERSION} = [RegEx]::Match($contents,"(?:\\d+\\.\\d+\\.\\d+\\.\\d+)").ToString()
 
               #estraggo il numero di build (l'ultimo della serie della versione)
               $currentBuild = [RegEx]::Match($versionString,"(\\.)(\\d+)(""\\))").Groups[2]
@@ -74,7 +74,7 @@ pipeline {
           steps {
             powershell '''
               # copio la cartella bin da un'altra parte
-              $destPath = $env.BIN_FOLDER_DESTINATION + "\\BUILD" + env.BUILD_VERSION
+              $destPath = $env.BIN_FOLDER_DESTINATION + "\\BUILD " + ${BUILD_VERSION}
               Copy-Item -Path "TestJenkins\\bin" -Destination "$destPath" -Recurse
           '''
           
