@@ -16,5 +16,12 @@ namespace TestJenkins
         {
             InitializeComponent();
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Program p = new Program();
+            button1.Text="Fai somma "+ p.FaiSomma(textBox1.Text.ToString(), textBox2.Text.ToString());
+
+        }
     }
 }

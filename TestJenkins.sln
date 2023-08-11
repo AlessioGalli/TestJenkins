@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.33026.149
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestJenkins", "TestJenkins\TestJenkins.csproj", "{D10D1E15-4196-447F-BA50-42A1CBF253FE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyUnitTestProject", "UnitTestProject1\MyUnitTestProject.csproj", "{32BF10A9-55F1-45FB-8C10-F436E77BEC8C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,18 @@ Global
 		{D10D1E15-4196-447F-BA50-42A1CBF253FE}.Release|x64.Build.0 = Release|Any CPU
 		{D10D1E15-4196-447F-BA50-42A1CBF253FE}.Release|x86.ActiveCfg = Release|x86
 		{D10D1E15-4196-447F-BA50-42A1CBF253FE}.Release|x86.Build.0 = Release|x86
+		{32BF10A9-55F1-45FB-8C10-F436E77BEC8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32BF10A9-55F1-45FB-8C10-F436E77BEC8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32BF10A9-55F1-45FB-8C10-F436E77BEC8C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{32BF10A9-55F1-45FB-8C10-F436E77BEC8C}.Debug|x64.Build.0 = Debug|Any CPU
+		{32BF10A9-55F1-45FB-8C10-F436E77BEC8C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{32BF10A9-55F1-45FB-8C10-F436E77BEC8C}.Debug|x86.Build.0 = Debug|Any CPU
+		{32BF10A9-55F1-45FB-8C10-F436E77BEC8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32BF10A9-55F1-45FB-8C10-F436E77BEC8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32BF10A9-55F1-45FB-8C10-F436E77BEC8C}.Release|x64.ActiveCfg = Release|Any CPU
+		{32BF10A9-55F1-45FB-8C10-F436E77BEC8C}.Release|x64.Build.0 = Release|Any CPU
+		{32BF10A9-55F1-45FB-8C10-F436E77BEC8C}.Release|x86.ActiveCfg = Release|Any CPU
+		{32BF10A9-55F1-45FB-8C10-F436E77BEC8C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
