@@ -41,6 +41,7 @@ pipeline {
               $BuildVersionNumber | out-file -encoding ASCII -filepath $path
           '''
       }
+    }
     
       stage('Build') {
           steps {
