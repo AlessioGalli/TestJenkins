@@ -30,19 +30,20 @@ pipeline {
               # leggo la versione dal file
               $assemblyInfoPath="TestJenkins\\Properties\\AssemblyInfo.cs"
               $contents = [System.IO.File]::ReadAllText($assemblyInfoPath)
-              $versionString = [RegEx]::Match($contents,"(AssemblyFileVersion\\("")(?:\\d+\\.\\d+\\.\\d+\\.\\d+)(""\\))")		# estraggo la versione assembly 
-              Write-Host ("AssemblyFileVersion: " +$versionString)													# e la stampo
+              #---$versionString = [RegEx]::Match($contents,"(AssemblyFileVersion\\("")(?:\\d+\\.\\d+\\.\\d+\\.\\d+)(""\\))")		# estraggo la versione assembly 
+              #---Write-Host ("AssemblyFileVersion: " +$versionString)													# e la stampo
               
-              #estraggo la versione e me la salvo nella variabile d'ambiene per lo step dopo
-              #${env:BUILD_VERSION} = [RegEx]::Match($contents,"(?:\\d+\\.\\d+\\.\\d+\\.\\d+)").ToString()
+              #---estraggo la versione e me la salvo nella variabile d'ambiene per lo step dopo
+              #---${env:BUILD_VERSION} = [RegEx]::Match($contents,"(?:\\d+\\.\\d+\\.\\d+\\.\\d+)").ToString()
 
-              #estraggo il numero di build (l'ultimo della serie della versione)
-              $currentBuild = [RegEx]::Match($versionString,"(\\.)(\\d+)(""\\))").Groups[2]
-              Write-Host ("Current Build: " + $currentBuild.Value)
+              #---estraggo il numero di build (l'ultimo della serie della versione)
+              #---$currentBuild = [RegEx]::Match($versionString,"(\\.)(\\d+)(""\\))").Groups[2]
+              #---#Write-Host ("Current Build: " + $currentBuild.Value)
               
               #incremento
-              $newBuild= [int]$currentBuild.Value +  1
-              Write-Host ("Nuova build: " + $newBuild)
+              #$newBuild= [int]$currentBuild.Value +  1
+              $newBuild= ${env.BUILD_NUMBER}
+              Write-Host ("Current build: " + $newBuild)
               
               #faccio update del file e lo sovrascrivo
               Write-Host ("Setting version in assembly info file ")
@@ -69,24 +70,28 @@ pipeline {
         }
       }
 
+      stage('Running unit tests') {
+        steps {
+          bat "dotnet add ${workspace}/TestJenkins/UnitTestProject1/UnitTestProject1.csproj package JUnitTestLogger --version 1.1.0"
+          bat "dotnet test ${workspace}/TestJenkins/UnitTestProject1/UnitTestProject1.csproj --logger \"junit;LogFilePath=\"${WORKSPACE}\"/TestResults/1.0.0.\"${env.BUILD_NUMBER}\"/results.xml\" --configuration release --collect \"Code coverage\""
+          powershell '''
+            $destinationFolder = \"${env:BIN_FOLDER_DESTINATION} + "\\BUILD " + ${env.BUILD_NUMBER}\"
+            if (!(Test-Path -path $destinationFolder)) {New-Item $destinationFolder -Type Directory}
+            $file = Get-ChildItem -Path \"$env:WORKSPACE/TestJenkins/TestResults/*/*.coverage\"
+            $file | Rename-Item -NewName testcoverage.coverage
+            $renamedFile = Get-ChildItem -Path \"$env:WORKSPACE/TestJenkins/TestResults/*/*.coverage\"
+            Copy-Item $renamedFile -Destination $destinationFolder
+          '''            
+        }        
+      }
+
 
       stage('Copy BIN folder') {
         
           steps {
             powershell '''
-              # -------------------------------------sta parte è da rivedere. la versione me la devo salvare dallo step prima------------------------------------------------
-              # leggo la versione dal file
-              $assemblyInfoPath="TestJenkins\\Properties\\AssemblyInfo.cs"
-              $contents = [System.IO.File]::ReadAllText($assemblyInfoPath)
-              $versionString = [RegEx]::Match($contents,"(AssemblyFileVersion\\("")(?:\\d+\\.\\d+\\.\\d+\\.\\d+)(""\\))")		# estraggo la versione assembly 
-              Write-Host ("AssemblyFileVersion: " +$versionString)													# e la stampo
-              
-              #estraggo la versione e me la salvo nella variabile d'ambiene per lo step dopo
-              $BUILD_VERSION = [RegEx]::Match($contents,"(?:\\d+\\.\\d+\\.\\d+\\.\\d+)").ToString()
-              #---------------------------------------------------------------------------------------------------------------------------------------------------------------
-
               # copio la cartella bin da un'altra parte
-              $destPath = ${env:BIN_FOLDER_DESTINATION} + "\\BUILD " + $BUILD_VERSION # qui uso la BUILD_VERSION che ho salvato prima
+              $destPath = ${env:BIN_FOLDER_DESTINATION} + "\\BUILD " + ${env.BUILD_NUMBER}
 
               echo "destinatione: " + $destPath
               Copy-Item -Path "TestJenkins\\bin" -Destination "$destPath" -Recurse
