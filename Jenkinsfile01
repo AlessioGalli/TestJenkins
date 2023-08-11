@@ -3,10 +3,10 @@ pipeline {
   agent any
 
   environment {
-    //WORKSPACE = "C:\\Users\\u14856\\source\\repos\\TestJenkins\\"
     MSBUILD = "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Professional\\MSBuild\\15.0\\Bin\\MSBuild.exe"
     CONFIG = 'Release'
     PLATFORM = 'x86'
+    BIN_FOLDER_DESTINATION = "C:\\Users\\u14856\\Downloads\\output_Jenkins"
   }
   
   stages {
@@ -28,11 +28,14 @@ pipeline {
       steps {
           powershell '''
               # leggo la versione dal file
-              $assemblyInfoPath=${env.WORKSPACE} + "TestJenkins\\Properties\\AssemblyInfo.cs"
+              $assemblyInfoPath="TestJenkins\\Properties\\AssemblyInfo.cs"
               $contents = [System.IO.File]::ReadAllText($assemblyInfoPath)
               $versionString = [RegEx]::Match($contents,"(AssemblyFileVersion\\("")(?:\\d+\\.\\d+\\.\\d+\\.\\d+)(""\\))")		# estraggo la versione assembly 
               Write-Host ("AssemblyFileVersion: " +$versionString)													# e la stampo
               
+              #estraggo la versione e me la salvo nella variabile d'ambiene per lo step dopo
+              env.BUILD_VERSION = [RegEx]::Match($contents,"(?:\\d+\\.\\d+\\.\\d+\\.\\d+)").ToString()
+
               #estraggo il numero di build (l'ultimo della serie della versione)
               $currentBuild = [RegEx]::Match($versionString,"(\\.)(\\d+)(""\\))").Groups[2]
               Write-Host ("Current Build: " + $currentBuild.Value)
@@ -50,7 +53,7 @@ pipeline {
               # ritiro fuori la versione e me la salvo in un file version.txt nella cartella principale del workspace
               $version = gc $assemblyInfoPath | select-string -pattern "AssemblyVersion"
               $BuildVersionNumber = $version -match '^\\[assembly: AssemblyVersion\\(\\"(?<major>[0-9]+)\\.(?<minor>[0-9]+)\\.(?<revision>[0-9]+)\\.(?<build>[0-9]+)\\"\\)\\]'
-              $path = $env.WORKSPACE + "version.txt"
+              $path = "version.txt"
               $BuildVersionNumber | out-file -encoding ASCII -filepath $path
           '''
       }
@@ -61,6 +64,19 @@ pipeline {
           steps {
            // bat "dotnet restore TestJenkins\\TestJenkins.csproj"
             bat "\"${MSBUILD}\" TestJenkins\\TestJenkins.csproj /t:rebuild /clp:ShowCommandLine"
+          
+        }
+      }
+
+
+      stage('Copy BIN folder') {
+        
+          steps {
+            powershell '''
+              # copio la cartella bin da un'altra parte
+              $destPath = $env.BIN_FOLDER_DESTINATION + "\\BUILD" + env.BUILD_VERSION
+              Copy-Item -Path "TestJenkins\\bin" -Destination "$destPath" -Recurse
+          '''
           
         }
       }
