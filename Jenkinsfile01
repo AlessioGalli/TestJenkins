@@ -11,7 +11,18 @@ pipeline {
   
   stages {
 
-      
+      stage("Clone Git Repository") {
+          steps {
+              git(
+                  url: "https://github.com/AlessioGalli/TestJenkins.git",
+                  branch: "master",
+                  changelog: true,
+                  poll: true
+              )
+            
+          }
+      }
+
 
     stage('Update manifest version') {
       steps {
