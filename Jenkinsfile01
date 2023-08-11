@@ -29,8 +29,7 @@ pipeline {
     stage('Build') {
       steps {
         bat "dotnet restore TestJenkins\\TestJenkins.csproj"
-
-        bat "\"${MSBUILD}\" TestJenkins.sln /p:Configuration=${env.CONFIG} /p:AppxBundlePlatforms=${env.PLATFORM}  /p:AppxBundle=Never /p:UapAppxPackageBuildMode=Sideloading  /p:AppxPackageSigningEnabled=false"
+        bat "\"${MSBUILD}\" TestJenkins\\TestJenkins.csproj /t:rebuild /clp:ShowCommandLine"
         
       }
       post {
