@@ -42,6 +42,10 @@ pipeline {
               
               #incremento
               #$newBuild= [int]$currentBuild.Value +  1
+
+              echo "${env.BUILD_NUMBER}"
+              echo "${BUILD_NUMBER}"
+
               $newBuild= ${env.BUILD_NUMBER}
               Write-Host ("Current build: " + $newBuild)
               
