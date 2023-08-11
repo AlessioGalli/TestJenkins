@@ -59,10 +59,9 @@ pipeline {
       stage('Build') {
         
           steps {
-            dir("repoClonato") {
            // bat "dotnet restore TestJenkins\\TestJenkins.csproj"
             bat "\"${MSBUILD}\" TestJenkins\\TestJenkins.csproj /t:rebuild /clp:ShowCommandLine"
-          }
+          
         }
       }
 
